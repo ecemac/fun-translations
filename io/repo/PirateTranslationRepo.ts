@@ -1,4 +1,4 @@
-class YodaTranslationRepo {
+class PirateTranslationRepo {
   async getTranslation(text: string) {
     // const response = await fetch(
     //   "https://api.funtranslations.com/translate/yoda.json",
@@ -8,7 +8,7 @@ class YodaTranslationRepo {
     // return response;
 
     const json = await import(
-      "../mocks/api.funtranslations.com_translate_yoda.json"
+      "../mocks/api.funtranslations.com_translate_pirate.json"
     );
 
     return Promise.resolve({
@@ -19,4 +19,4 @@ class YodaTranslationRepo {
   }
 }
 
-export default YodaTranslationRepo;
+export default PirateTranslationRepo;

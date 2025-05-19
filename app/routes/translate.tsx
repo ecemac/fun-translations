@@ -1,5 +1,6 @@
 import type { Route } from "./+types/translate";
 import { TranslateForm } from "../translate/form";
+import type { Engine } from "domain/types/Engine";
 import Content from "view/components/Content";
 import Sidepane from "view/components/Sidepane";
 import { createDefaultFunTranslationService } from "io/service/FunTranslationService";
@@ -12,10 +13,14 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export const action = async ({ request }) => {
-  const translationService = createDefaultFunTranslationService();
-  const translation = await translationService.getTranslation("placeholder");
-  // should I do something with that request?
+export const action = async ({ request }: Route.ActionArgs) => {
+  // extracts the form values and gets user input
+  const formData = await request.formData();
+  const text = formData.get("text")?.toString() ?? "";
+  const engine = formData.get("engine")?.toString() || "yoda";
+
+  const translationService = createDefaultFunTranslationService(engine as Engine);
+  const translation = await translationService.getTranslation(text);
 
   return translation;
 };
@@ -28,7 +33,11 @@ export default function Translate() {
       <Sidepane>It would be nice to see past translations here.</Sidepane>
       <Content>
         <TranslateForm />
-        {JSON.stringify(translation)}
+        {translation && (
+          <div className="mt-4 text-zinc-900">
+            <p><strong>Translation:</strong> {translation.text}</p>
+          </div>
+        )}
       </Content>
     </div>
   );
