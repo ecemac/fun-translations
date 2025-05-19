@@ -1,5 +1,6 @@
 import type { Translation } from "domain/types/Translation";
 import type { Engine } from "domain/types/Engine";
+import cacheService from "./CacheService";
 import YodaTranslationRepo from "../repo/YodaTranslationRepo";
 import PirateTranslationRepo from "../repo/PirateTranslationRepo";
 
@@ -12,19 +13,31 @@ type TranslationRepo = YodaTranslationRepo | PirateTranslationRepo
 
 class DefaultFunTranslationService implements FunTranslationService {
   repo: TranslationRepo;
+  engine: Engine;
 
-  constructor(repo: TranslationRepo) {
+  constructor(repo: TranslationRepo, engine: Engine) {
     this.repo = repo;
+    this.engine = engine;
   }
 
   async getTranslation(text: string) {
+    const key = `${this.engine}:${text}`;
+
+    // use cached result
+    if (cacheService.has(key)) {
+      return cacheService.get(key)!;
+    }
+
     const response = await this.repo.getTranslation(text);
     const payload = await response.json();
 
     const translation: Translation = {
-  text: payload.contents.translated,
-  engine: payload.contents.translation as Engine
-};
+      text: payload.contents.translated,
+      engine: payload.contents.translation as Engine
+    };
+
+    // store translation in cache
+    cacheService.set(key, translation); 
     return translation;
   }
 }
@@ -41,7 +54,7 @@ const createDefaultFunTranslationService = (engine: Engine) => {
       break;
   }
   
-  const service = new DefaultFunTranslationService(repo);
+  const service = new DefaultFunTranslationService(repo, engine);
 
   return service;
 };

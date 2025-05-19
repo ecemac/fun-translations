@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
 import type { Route } from "./+types/translate";
 import { TranslateForm } from "../translate/form";
+import type { Translation } from "domain/types/Translation";
 import type { Engine } from "domain/types/Engine";
 import Content from "view/components/Content";
 import Sidepane from "view/components/Sidepane";
 import { createDefaultFunTranslationService } from "io/service/FunTranslationService";
+import { get, set, clear } from "io/service/TranslationHistoryService";
 import { useActionData } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
@@ -27,6 +30,21 @@ export const action = async ({ request }: Route.ActionArgs) => {
 
 export default function Translate() {
   const translation = useActionData();
+  const [history, setHistory] = useState<Translation[]>([]);
+
+  useEffect(() => {
+    // get previous translations from localstorage
+    setHistory(get());
+  }, []);
+
+  useEffect(() => {
+    if (!translation) return;
+    // set new translation to localstorage
+    set(translation)
+    setHistory(get());
+  }, [translation]);
+
+  console.log(history)
 
   return (
     <div className="flex h-full py-3">
