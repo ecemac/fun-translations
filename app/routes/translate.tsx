@@ -5,8 +5,9 @@ import type { Translation } from "domain/types/Translation";
 import type { Engine } from "domain/types/Engine";
 import Content from "view/components/Content";
 import Sidepane from "view/components/Sidepane";
+import Button from "view/components/Button";
 import { createDefaultFunTranslationService } from "io/service/FunTranslationService";
-import { get, set, clear } from "io/service/TranslationHistoryService";
+import { get, set, remove, clear } from "io/service/TranslationHistoryService";
 import { useActionData } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
@@ -31,10 +32,12 @@ export const action = async ({ request }: Route.ActionArgs) => {
 export default function Translate() {
   const translation = useActionData();
   const [history, setHistory] = useState<Translation[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
   useEffect(() => {
     // get previous translations from localstorage
     setHistory(get());
+    setHistoryLoading(false)
   }, []);
 
   useEffect(() => {
@@ -44,11 +47,43 @@ export default function Translate() {
     setHistory(get());
   }, [translation]);
 
-  console.log(history)
+  const handleRemove = (item: Translation) => {
+    // remove translation from history
+    remove(item);
+    setHistory(get());
+  };
+
+  const handleClear = () => {
+    clear()
+    setHistory(get());
+  }
 
   return (
     <div className="flex h-full py-3">
-      <Sidepane>It would be nice to see past translations here.</Sidepane>
+      <Sidepane>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg">Past translations</h3>
+          {!historyLoading && history.length !== 0 && <Button className="border-white bg-transparent text-xs ml-2" onClick={handleClear}>Clear all</Button>}
+          
+        </div>
+        
+        {historyLoading ? <p className="text-zinc-500 italic">Loading history…</p> : history.length === 0 && <p>No past translations yet.</p>}
+      
+      {history.map((item, index) => (
+          <div key={index} className="flex items-center justify-between mb-2">
+            <p className="text-left text-sm text-white">
+              {item.engine} said: {item.text}
+            </p>
+            <button
+              onClick={() => handleRemove(item)}
+              className="text-red-500 text-xs ml-2"
+              title="Remove"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </Sidepane>
       <Content>
         <TranslateForm />
         {translation && (

@@ -10,6 +10,7 @@ const get = (): Translation[] => {
 const set = (translation: Translation) => {
     const existing = get();
     const updated = [translation, ...existing.filter(
+    // doesn't add existing translation to storage
     t => !(t.text === translation.text && t.engine === translation.engine)
   )];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
