@@ -45,6 +45,8 @@ class DefaultFunTranslationService implements FunTranslationService {
 
 const createDefaultFunTranslationService = (engine: Engine) => {
   let repo: TranslationRepo;
+
+  // creates the repo according to engine selection
   switch (engine) {
     case "pirate":
       repo = new PirateTranslationRepo();
