@@ -12,6 +12,7 @@ export function TranslateForm() {
         <select id="engine" name="engine" className="text-zinc-900 p-2 border rounded">
           <option value="yoda">Yoda</option>
           <option value="pirate">Pirate</option>
+          <option value="sindarin">Elvish Sindarin</option>
         </select>
         </div>
         

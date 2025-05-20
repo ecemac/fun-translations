@@ -74,13 +74,13 @@ export default function Translate() {
             <p className="text-left text-sm text-white">
               {item.engine} said: {item.text}
             </p>
-            <button
+            <Button
               onClick={() => handleRemove(item)}
-              className="text-red-500 text-xs ml-2"
+              className="border-red-500 bg-red-500 text-white text-xs ml-2"
               title="Remove"
             >
               ✕
-            </button>
+            </Button>
           </div>
         ))}
       </Sidepane>

@@ -3,12 +3,13 @@ import type { Engine } from "domain/types/Engine";
 import cacheService from "./CacheService";
 import YodaTranslationRepo from "../repo/YodaTranslationRepo";
 import PirateTranslationRepo from "../repo/PirateTranslationRepo";
+import SindarinTranslationRepo from "io/repo/SindarinTranslationRepo";
 
 interface FunTranslationService {
   getTranslation(text: string): Promise<Translation>;
 }
 
-type TranslationRepo = YodaTranslationRepo | PirateTranslationRepo
+type TranslationRepo = YodaTranslationRepo | PirateTranslationRepo | SindarinTranslationRepo
 
 
 class DefaultFunTranslationService implements FunTranslationService {
@@ -48,7 +49,12 @@ const createDefaultFunTranslationService = (engine: Engine) => {
     case "pirate":
       repo = new PirateTranslationRepo();
       break;
+    case "sindarin":
+      repo = new SindarinTranslationRepo();
+      break;
     case "yoda":
+      repo = new YodaTranslationRepo();
+      break;
     default:
       repo = new YodaTranslationRepo();
       break;
