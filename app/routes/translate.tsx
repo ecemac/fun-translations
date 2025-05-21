@@ -12,7 +12,7 @@ import { useActionData } from "react-router";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
+    { title: "Fun Translations" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }
